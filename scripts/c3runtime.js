@@ -4039,6 +4039,695 @@ WindowY(){return this._windowY},WindowWidth(){return this._windowWidth},WindowHe
 }
 
 {
+"use strict";
+{
+	C3.Plugins.VKBridge = class VKBridgePlugin extends C3.SDKPluginBase {
+		constructor(opts){
+			super(opts);
+		}
+		
+		Release(){
+			super.Release();
+		}
+	};
+}
+}
+
+{
+"use strict";
+{
+	C3.Plugins.VKBridge.Type = class VKBridgeType extends C3.SDKTypeBase {
+		constructor(objectClass){
+			super(objectClass);
+		}
+		
+		Release(){
+			super.Release();
+		}
+		
+		OnCreate(){}
+	};
+}
+}
+
+{
+"use strict";
+{
+    var Instance = class VKBridgeInstance extends C3.SDKInstanceBase {
+        constructor(inst, properties = []){
+            super(inst);
+            this.conditions = C3.Plugins.VKBridge.Cnds;
+            this.init(properties);
+		}
+		
+        async init(properties){
+			// Properties
+			this.app_id				= properties[0];
+			this.app_secret_key		= properties[1];
+			this.app_service_key	= properties[2];
+			this.subscribe_enabled	= properties[3];
+			// Error
+			this.error_code			= 0;
+			this.error_reason		= "";
+			// User
+			this.user_id			= 0;
+			this.user_token			= "";
+			this.user_rights		= [];
+			this.user_data			= [];
+			// Friends
+			this.friends_count		= 0;
+			this.friends_id			= [];
+			this.friends_data		= [];
+			// Storage
+			this.storage_data_hg	= {};
+			this.storage_set_keys	= [];
+			this.storage_get_keys	= [];
+			this.storage_data		= [];
+			// Leaderboard
+			this.leaderboard_count	= 0;
+			this.leaderboard_data	= [];
+			this.leaderboard_prof	= [];
+			// Client
+			this.client_platform	= "";
+			this.client_version		= "";
+			// Scrips
+			function addScript(src){
+				var script = document.createElement('script');
+				script.src = src;
+				script.async = true;
+				document.head.appendChild(script);
+				script.onload = function(){console.log('Script ' + src + ' loaded');};
+			};
+						
+			addScript('https://vk.com/js/api/xd_connection.js?2');
+			addScript('https://ad.mail.ru/static/admanhtml/rbadman-html5.min.js');
+			addScript('https://vk.com/js/api/adman_init.js');
+							
+			this.AdsReady = function(adman){
+				adman.onStarted(function(){console.log("ShowAdsStart");});
+				adman.onCompleted(function(){console.log("ShowAdsSuccess");});
+				adman.onSkipped(function(){});
+				adman.onClicked(function(){});
+				adman.start('preroll');
+			};
+						
+			this.NoAds = function(){console.log("ShowAdsFailed");};
+			
+			window.addEventListener('load', function(){
+				admanInit({
+					user_id: this.user_id, app_id: this.app_id,
+					// mobile: true,
+					// params: {preview: 1},
+					type: "preloader"}, this.AdsReady, this.NoAds);
+			});
+        }
+		
+        Release(){
+            super.Release();
+        }
+        SaveToJson(){
+            return {
+                // data to be saved for savegames
+            };
+        }
+        LoadFromJson(o){
+            // load state for savegames
+        }
+		GetScriptInterfaceClass(){
+			return VKBInstance;
+		}
+	};
+	
+    if (globalThis.C3) {
+        C3.Plugins.VKBridge.Instance = Instance;
+    }
+
+    Instance;
+}
+}
+
+{
+"use strict";
+{
+    var Cnds = {
+		// Bridge connected
+		BridgeConnectSuccess()				{console.log("VK Bridge connected");																			return true;},
+		// Bridge not connected
+		BridgeConnectFailed()				{console.log("VK Bridge not connected");																		return true;},
+		// User rights confirmed
+		BridgeRightsSuccess(key)			{if(this.user_rights[key]){
+												if (this.user_rights[key] == "success"){
+													console.log("User rights " + key + " confirmed");																		
+													this.user_rights[key] = "";																				return true;}}},
+		// User rights not confirmed
+		BridgeRightsFailed(key)				{if(this.user_rights[key]){
+												if (this.user_rights[key] == "failed"){
+													console.log("User rights " + key + " not confirmed");
+													this.user_rights[key] = "";																				return true;}}},
+		// User is authorized
+		AuthorizationSuccess()				{console.log("User is authorized");																				return true;},
+		// Authorization error
+		AuthorizationFailed()				{console.log("Authorization error");																			return true;},
+		// User data received
+		UserGetSuccess()					{console.log("User data received");																				return true;},
+		// User data not received
+		UserGetFailed()						{console.log("User data not received");																			return true;},
+		// Friends data received
+		FriendsGetSuccess()					{console.log("Friends data received");																			return true;},
+		// Friends data not received
+		FriendsGetFailed()					{console.log("Friends data not received");																		return true;},
+		// User key loaded
+		StorageHGSuccess(user, key)			{if(this.storage_data_hg[key]){
+												let result = "result" + user;
+												let data = this.storage_data_hg[key];
+												if(data[result]){
+													if (data[result] == "success"){
+														console.log("User key " + key + " from user " + user + " loaded");
+														data[result] = "";																					return true;}}}},
+		// User key not loaded
+		StorageHGFailed(user, key)			{if(this.storage_data_hg[key]){
+												let result = "result" + user;
+												let data = this.storage_data_hg[key];
+												if(data[result]){
+													if (data[result] == "failed"){
+														console.log("User key " + key + " from user " + user + " not loaded");
+														data[result] = "";																					return true;}}}},
+		// Variables loaded
+		StorageGetSuccess(key)				{if(this.storage_get_keys[key]){
+												if (this.storage_get_keys[key] == "success"){
+													console.log("Variable " + key + " loaded");
+													this.storage_get_keys[key] = "";																		return true;}}},
+		// Variables not loaded
+		StorageGetFailed(key)				{if(this.storage_get_keys[key]){
+												if (this.storage_get_keys[key] == "failed"){
+													console.log("Variable " + key + " not loaded");		
+													this.storage_get_keys[key] = "";																		return true;}}},
+		// Variable saved
+		StorageSetSuccess(key)				{if(this.storage_set_keys[key]){
+												if (this.storage_set_keys[key] == "success"){
+													console.log("Variable " + key + " saved");
+													this.storage_set_keys[key] = "";																		return true;}}},
+		// Variable not saved
+		StorageSetFailed(key)				{if(this.storage_set_keys[key]){
+												if (this.storage_set_keys[key] == "failed"){
+													console.log("Variable " + key + " not saved");		
+													this.storage_set_keys[key] = "";																		return true;}}},
+		// Friends invited
+		ShowInviteSuccess()					{console.log("Friends invited");																				return true;},
+		// Friends not invited
+		ShowInviteFailed()					{console.log("Friends not invited");																			return true;},
+		// Wall post created
+		ShowWallSuccess()					{console.log("Wall post created");																				return true;},
+		// Wall post failed
+		ShowWallFailed()					{console.log("Wall post failed");																				return true;},
+		// Purchase success
+		ShowOrderSuccess()					{console.log("Purchase success");																				return true;},
+		// Purchase failed
+		ShowOrderFailed()					{console.log("Purchase failed");																				return true;},
+		// Advertising start
+		ShowAdsStart()						{console.log("Advertising start");																				return true;},
+		// Advertising success
+		ShowAdsSuccess()					{console.log("Advertising success");																			return true;},
+		// Advertising failed
+		ShowAdsFailed()						{console.log("Advertising failed");																				return true;},
+		// Advertising skipped
+		ShowAdsSkipped()					{console.log("Advertising skipped");																			return true;},
+		// Advertising clicked
+		ShowAdsClicked()					{console.log("Advertising clicked");																			return true;},
+		// Advertising mobile success
+		AdsMobileSuccess()					{console.log("Advertising success");																			return true;},
+		// Advertising mobile failed
+		AdsMobileFailed()					{console.log("Advertising failed");																				return true;},
+		// Leaderboard mobile success
+		LeaderBoardVKUISuccess()			{console.log("Leaderboard mobile success");																		return true;},
+		// Leaderboard mobile failed
+		LeaderBoardVKUIFailed()				{console.log("Leaderboard mobile failed");																		return true;},
+		// Leaderboard success
+		LeaderBoardSuccess()				{console.log("Leaderboard success");																			return true;},
+		// Leaderboard failed
+		LeaderBoardFailed()					{console.log("Leaderboard failed");																				return true;},
+		// Leadersave success
+		LeaderSaveSuccess()					{console.log("Leadersave success");																				return true;},
+		// Leadersave failed
+		LeaderSaveFailed()					{console.log("Leadersave failed");																				return true;},
+		// Join group success
+		JoinGroupSuccess()					{console.log("Join group success");																				return true;},
+		// Join group failed
+		JoinGroupFailed()					{console.log("Join group failed");																				return true;},
+		// Notification success
+		TapticSuccess()						{console.log("Taptic success");																					return true;},
+		// Notification failed
+		TapticFailed()						{console.log("Taptic failed");																					return true;},		
+		// Notification sent
+		UserNotSuccess()					{console.log("Notification sent");																				return true;},
+		// Notification not sent
+		UserNotFailed()						{console.log("Notification not sent");																			return true;},
+		// App client success
+		AppGetClientSuccess()				{console.log("App client success");																				return true;},
+		// App client failed
+		AppGetClientFailed()				{console.log("App client failed");																				return true;}
+	};
+	
+    if (globalThis.C3) {
+        C3.Plugins.VKBridge.Cnds = Cnds;
+    }
+
+    Cnds;
+}
+}
+
+{
+"use strict";
+{
+    var Acts = {
+		// Bridge connect
+		BridgeConnect(token_rights){			
+			// Подключение VK Bridge
+			console.log("Connect VK Bridge");
+			vkBridge.send('VKWebAppInit');
+			// Подключение событий, отправленных нативным клиентом
+			if (this.subscribe_enabled == true) vkBridge.subscribe((e) => console.log(e));
+			
+			// Получение прав доступа
+			vkBridge
+				.send("VKWebAppGetAuthToken", {"app_id": this.app_id, "scope": token_rights})
+				.then(data => {
+					this.user_token = data.access_token;
+					this.Trigger(this.conditions.BridgeConnectSuccess);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.BridgeConnectFailed);
+				});
+		},		
+		// Bridge rights
+		BridgeRights(token_rights){
+			// Проверка прав доступа
+			vkBridge
+				.send("VKWebAppCheckAllowedScopes", {"scopes": token_rights})
+				.then(data => {
+					var data_rights = data.result[0];
+					if (data_rights.allowed == true){
+						this.user_rights[token_rights] = "success";
+						this.Trigger(this.conditions.BridgeRightsSuccess);
+					}
+					else {
+						this.user_rights[token_rights] = "failed";
+						if (token_rights == "notify"){
+							// Получение прав доступа для уведомлений
+							vkBridge
+								.send("VKWebAppAllowNotifications")
+								.then(data => {
+									this.user_token = data.access_token;
+									this.user_rights[token_rights] = "success";
+									this.Trigger(this.conditions.BridgeRightsSuccess);
+								})
+								.catch(error => {
+									if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+									this.Trigger(this.conditions.BridgeRightsFailed);
+								});
+						}
+						else {
+							// Получение прав доступа для всех остальных методов
+							vkBridge
+								.send("VKWebAppGetAuthToken", {"app_id": this.app_id, "scope": token_rights})
+								.then(data => {
+									this.user_token = data.access_token;
+									this.user_rights[token_rights] = "success";
+									this.Trigger(this.conditions.BridgeRightsSuccess);
+								})
+								.catch(error => {
+									if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+									this.Trigger(this.conditions.BridgeRightsFailed);
+								});
+						}
+					}
+				})
+		},
+		// Authorization
+		Authorization(){
+			vkBridge
+				.send("VKWebAppGetUserInfo")
+				.then(data => {
+					this.user_id = data["id"];
+					this.Trigger(this.conditions.AuthorizationSuccess);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.AuthorizationFailed);
+				});
+		},
+		// User get
+		UserGet(get_user_id, get_fields){
+			vkBridge
+				.send("VKWebAppCallAPIMethod", {"method": "users.get", "request_id": "user", "params": {"user_ids": get_user_id, "fields": get_fields, "v": "5.130", "access_token": this.user_token}})
+				.then(data => {
+					this.user_data = data.response[0];
+					this.Trigger(this.conditions.UserGetSuccess);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.UserGetFailed);
+				});
+		},
+		// Friends get
+		FriendsGet(get_fields){
+			vkBridge
+				.send("VKWebAppCallAPIMethod", {"method": "friends.getAppUsers", "request_id": "friends", "params": {"v": "5.130", "access_token": this.user_token}})
+				.then(data => {
+					this.friends_id = data.response;
+					this.friends_count = this.friends_id.length;
+						vkBridge
+							.send("VKWebAppCallAPIMethod", {"method": "users.get", "request_id": "friends", "params": {"user_ids": this.friends_id.join(','), "fields": get_fields, "v": "5.130", "access_token": this.user_token}})
+							.then(data => {
+								this.friends_data = data.response;
+								this.Trigger(this.conditions.FriendsGetSuccess);
+							})
+							.catch(error => {
+								if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+								this.Trigger(this.conditions.FriendsGetFailed);
+							});
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.FriendsGetFailed);
+				});				
+		},
+		// User key
+		StorageHG(user_id, user_key, storage_data){
+			vkBridge
+				.send("VKWebAppCallAPIMethod", {"method": "storage.get", "params": {"user_id": user_id, "key": user_key, "v": "5.131", "access_token": this.app_service_key}})
+				.then(data => {
+					storage_data = data.response[0];
+					let user_result = "result" + user_id;
+					if (storage_data.value == ""){
+						this.storage_data_hg[user_key] = {[user_id]: "", [user_result]: "failed"};
+						this.Trigger(this.conditions.StorageHGFailed);
+					}
+					else {
+						this.storage_data_hg[user_key] = {[user_id]: storage_data.value, [user_result]: "success"};
+						this.Trigger(this.conditions.StorageHGSuccess);
+					}
+				})
+				.catch(error => {});
+		},
+		// Storage get
+		StorageGet(get_keys, keys){
+			var separator = /\s*,\s*/;
+			keys = get_keys.split(separator);
+			
+			vkBridge
+				.send("VKWebAppStorageGet", {"keys": keys})
+				.then(data => {
+					this.storage_data = data.keys;
+					var get_data = "";
+					for (let i = 0; i < this.storage_data.length; i++){
+						get_data = this.storage_data[i];
+						if (get_data.value == ""){
+							this.storage_get_keys[get_data.key] = "failed";
+							this.Trigger(this.conditions.StorageGetFailed);
+						}
+						else {
+							this.storage_get_keys[get_data.key] = "success";
+							this.Trigger(this.conditions.StorageGetSuccess);
+						}
+					};
+				})
+				.catch(error => {});
+		},
+		// Storage set
+		StorageSet(set_keys, set_value){
+			vkBridge
+				.send("VKWebAppStorageSet", {"key": set_keys, "value": set_value})
+				.then(data => {
+					this.storage_set_keys[set_keys] = "success";
+					this.Trigger(this.conditions.StorageSetSuccess);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.storage_set_keys[set_keys] = "failed";
+					this.Trigger(this.conditions.StorageSetFailed);
+				});				
+		},
+		// Show invite box
+		ShowInvite(){
+			vkBridge
+				.send("VKWebAppShowInviteBox")
+				.then(data => {
+					this.Trigger(this.conditions.ShowInviteSuccess);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.ShowInviteFailed);
+				});				
+		},
+		// Create post
+		ShowWall(message, attachments){
+			vkBridge
+				.send("VKWebAppShowWallPostBox", {"message": message, "attachments": attachments})
+				.then(data => {
+					this.Trigger(this.conditions.ShowWallSuccess);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.ShowWallFailed);
+				});				
+		},
+		// Purchase item
+		ShowOrder(item){
+			vkBridge
+				.send("VKWebAppShowOrderBox", {"type": "item", "item": item})
+				.then(data => {
+					this.Trigger(this.conditions.ShowOrderSuccess);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.ShowOrderFailed);
+				});				
+		},
+		// Advertising web
+		async ShowAds(format, mobile){
+			// Properties
+			var ads = true;
+			var promise = "";
+			var result = "";
+			var callback = "";
+			var skipped = "";
+			var clicked = "";
+			// Format ads
+			var ads_format = "rewarded";
+			if (format === 0) ads_format = "preloader";
+			// Style ads
+			var ads_mobile = true;
+			if (mobile === 0) ads_mobile = false;
+			// Loading advertising
+			console.log("Loading advertising: " + ads_format);
+			// Advertising displayed
+			do {
+				// Load ads
+				if (ads){admanInit({user_id: this.user_id, app_id: this.app_id, mobile: ads_mobile, type: ads_format}, onAdsReady, onNoAds);ads = false;}
+				// Timeout trigger
+				promise = new Promise((resolve, reject) => {setTimeout(() => resolve("timeout"), 1000)});
+				// Trigger
+				result = await promise;
+				if (callback == "error"){this.Trigger(this.conditions.ShowAdsFailed);}
+				else if (callback == "start"){this.Trigger(this.conditions.ShowAdsStart);callback = "";}
+				else if (callback == "success"){this.Trigger(this.conditions.ShowAdsSuccess);}
+				else {console.log("Advertising displayed");}
+				if (skipped == "yes"){this.Trigger(this.conditions.ShowAdsSkipped);skipped = "no";}
+				if (clicked == "yes"){this.Trigger(this.conditions.ShowAdsClicked);clicked = "no";}
+			} while (callback == "");
+			
+			// Ads loading
+			function onAdsReady(adman){
+				adman.onStarted(function(){callback = "start";});
+				adman.onCompleted(function(){callback = "success";});
+				adman.onSkipped(function(){if (skipped == ""){skipped = "yes";}});
+				adman.onClicked(function(){if (clicked == ""){clicked = "yes";}});
+				adman.start('preroll');
+			};
+			// Ads not loading
+			function onNoAds(){callback = "error";};
+
+		},
+		// Advertising mobile
+		AdsMobile(format){
+			
+			var ads_format = "interstitial";
+			if (format === 0) ads_format = "preloader";
+			else if (format === 1) ads_format = "reward";
+			
+			vkBridge
+				.send("VKWebAppShowNativeAds", {"ad_format": ads_format})
+				.then(data => {
+					this.Trigger(this.conditions.AdsMobileSuccess);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.AdsMobileFailed);
+				});				
+		},
+		// Leaderboard VKUI
+		LeaderBoardVKUI(result, global){
+			vkBridge
+				.send("VKWebAppShowLeaderBoardBox", {"user_result": result, "global": global})
+				.then(data => {
+					this.Trigger(this.conditions.LeaderBoardVKUISuccess);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.LeaderBoardVKUIFailed);
+				});				
+		},
+		// Leaderboard
+		LeaderBoard(type, global, leaderboard_field){
+			var leader_type = "score";
+			if (type === 0) leader_type = "level";
+			
+			vkBridge
+				.send("VKWebAppCallAPIMethod", {"method": "apps.getLeaderboard", "request_id": "board", "params": {"type": leader_type, "global": global, "extended": 1, "v": "5.130", "access_token": this.user_token}})
+				.then(data => {
+					var data = data.response;
+					this.leaderboard_count = data.count;
+					this.leaderboard_data = data.items;
+					
+					let i = 0;
+					var board_data = [];
+					var board_id = [];
+					do {
+						board_data = this.leaderboard_data[i];
+						board_id[i] = board_data["user_id"];
+						i++;
+						if (i == this.leaderboard_count){
+							vkBridge
+								.send("VKWebAppCallAPIMethod", {"method": "users.get", "request_id": "userboard", "params": {"user_ids": board_id.join(','), "fields": leaderboard_field, "v": "5.130", "access_token": this.user_token}})
+								.then(data => {
+									this.leaderboard_prof = data.response;
+									this.Trigger(this.conditions.LeaderBoardSuccess);
+								})
+								.catch(error => {
+									if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+									this.Trigger(this.conditions.LeaderBoardFailed);
+								});
+						}
+					} while (i < this.leaderboard_count);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.LeaderBoardFailed);
+				});				
+		},
+		// Save leaderboard
+		LeaderSave(activ, value){
+			vkBridge
+				.send("VKWebAppCallAPIMethod", {"method": "secure.addAppEvent", "request_id": "leader", "params": {"user_id": this.user_id, "activity_id": activ+1, "value": value, "v": "5.130", "access_token": this.app_service_key, "client_secret": this.app_secret_key}})
+				.then(data => {
+					this.Trigger(this.conditions.LeaderSaveSuccess);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.LeaderSaveFailed);
+				});				
+		},
+		// Join group
+		JoinGroup(group_id){
+			vkBridge
+				.send("VKWebAppJoinGroup", {"group_id": group_id})
+				.then(data => {
+					this.Trigger(this.conditions.JoinGroupSuccess);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.JoinGroupFailed);
+				});
+		},
+		// Taptic
+		Taptic(style){
+			var taptic_style = "heavy";
+			if (style === 0) taptic_style = "light";
+			else if (style === 1) taptic_style = "medium";
+			
+			vkBridge
+				.send("VKWebAppTapticImpactOccurred", {"style": taptic_style})
+				.then(data => {
+					this.Trigger(this.conditions.TapticSuccess);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.TapticFailed);
+				});				
+		},		
+		// User notification
+		UserNot(user_id, message){
+			vkBridge
+				.send("VKWebAppCallAPIMethod", {"method": "secure.sendNotification", "params": {"user_id": user_id, "message": message, "v": "5.131", "access_token": this.app_service_key}})
+				.then(data => {
+					this.Trigger(this.conditions.UserNotSuccess);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.UserNotFailed);
+				});				
+		},
+		// App client
+		AppGetClient(){
+			vkBridge
+				.send("VKWebAppGetClientVersion")
+				.then(data => {
+					this.client_platform = data.platform;
+					this.client_version = data.version;
+					this.Trigger(this.conditions.AppGetClientSuccess);
+				})
+				.catch(error => {
+					if (error.error_data){var error_data = error.error_data;this.error_code = error_data["error_code"];this.error_reason = error_data["error_reason"];}
+					this.Trigger(this.conditions.AppGetClientFailed);
+				});
+		}
+	};
+	
+    if (globalThis.C3) {
+        C3.Plugins.VKBridge.Acts = Acts;
+    }
+
+    Acts;
+}
+}
+
+{
+"use strict";
+{
+	var Exps = {
+		// Error
+		ErrorCode()							{return this.error_code;},
+		ErrorReason()						{return this.error_reason;},
+		// User
+		UserID()							{return this.user_id;},
+		UserRights(type)					{if (this.user_rights[type]){return this.user_rights[type];};},
+		UserData(type)						{if (this.user_data[type]){return this.user_data[type];};},
+		// Friends
+		FriendsCount()						{return this.friends_count;},
+		FriendsData(number, type, data)		{if (this.friends_data[number]){data = this.friends_data[number];if (data[type]){return data[type];};};},
+		// Storage
+		StorageUser(user, key, data)		{if (this.storage_data_hg[key]){data = this.storage_data_hg[key];if (data[user]){return data[user];};};},
+		StorageData(keys)					{for (let i = 0; i < this.storage_data.length; i++){if (this.storage_data[i].key === keys){return this.storage_data[i].value;break;};};},
+		// Leaderboard
+		BoardCount()						{return this.leaderboard_count;},
+		BoardData(number, type, data)		{if (this.leaderboard_data[number]){data = this.leaderboard_data[number];if (data[type]){return data[type];};};},
+		BoardProf(number, type, data)		{if (this.leaderboard_prof[number]){data = this.leaderboard_prof[number];if (data[type]){return data[type];};};},
+		// Client
+		ClientPlatform()					{return this.client_platform;},
+		ClientVersion()						{return this.client_version;}
+	}
+	
+    if (globalThis.C3){
+        C3.Plugins.VKBridge.Exps = Exps;
+    }
+
+    Exps;
+}
+}
+
+{
 'use strict';{const C3=self.C3;C3.Behaviors.Bullet=class BulletBehavior extends C3.SDKBehaviorBase{constructor(opts){super(opts)}Release(){super.Release()}}}{const C3=self.C3;C3.Behaviors.Bullet.Type=class BulletType extends C3.SDKBehaviorTypeBase{constructor(behaviorType){super(behaviorType)}Release(){super.Release()}OnCreate(){}}}
 {const C3=self.C3;const C3X=self.C3X;const IBehaviorInstance=self.IBehaviorInstance;const SPEED=0;const ACCELERATION=1;const GRAVITY=2;const BOUNCE_OFF_SOLIDS=3;const SET_ANGLE=4;const STEPPING=5;const ENABLE=6;C3.Behaviors.Bullet.Instance=class BulletInstance extends C3.SDKBehaviorInstanceBase{constructor(behInst,properties){super(behInst);const wi=this.GetWorldInfo();this._speed=0;this._acc=0;this._g=0;this._bounceOffSolid=false;this._setAngle=false;this._isStepping=false;this._isEnabled=true;this._dx=
 0;this._dy=0;this._lastX=wi.GetX();this._lastY=wi.GetY();this._lastKnownAngle=wi.GetAngle();this._travelled=0;this._stepSize=Math.min(Math.abs(wi.GetWidth()),Math.abs(wi.GetHeight())/2);this._stopStepping=false;if(properties){this._speed=properties[SPEED];this._acc=properties[ACCELERATION];this._g=properties[GRAVITY];this._bounceOffSolid=!!properties[BOUNCE_OFF_SOLIDS];this._setAngle=!!properties[SET_ANGLE];this._isStepping=!!properties[STEPPING];this._isEnabled=!!properties[ENABLE]}const a=wi.GetAngle();
@@ -4422,11 +5111,15 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Browser,
 		C3.Plugins.CORDOVAIAP,
 		C3.Plugins.NodeWebkit,
+		C3.Plugins.VKBridge,
 		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Plugins.advert.Acts.CreateInterstitial,
 		C3.Plugins.System.Cnds.CompareVar,
 		C3.Plugins.advert.Acts.ShowInterstitial,
+		C3.Plugins.Mouse.Cnds.OnClick,
+		C3.Plugins.Mouse.Cnds.IsOverObject,
+		C3.Plugins.VKBridge.Acts.ShowInvite,
 		C3.Plugins.Sprite.Cnds.CompareFrame,
 		C3.Plugins.Sprite.Cnds.IsOutsideLayout,
 		C3.Plugins.System.Cnds.TriggerOnce,
@@ -4448,8 +5141,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Touch.Cnds.OnTapGesture,
 		C3.Plugins.Touch.Cnds.OnTapGestureObject,
 		C3.Plugins.Audio.Acts.StopAll,
-		C3.Plugins.Mouse.Cnds.OnClick,
-		C3.Plugins.Mouse.Cnds.IsOverObject,
 		C3.Plugins.System.Acts.SubVar,
 		C3.Plugins.System.Cnds.EveryTick,
 		C3.Plugins.Text.Acts.SetText,
@@ -4565,6 +5256,8 @@ self.C3_JsPropNameTable = [
 	{Браузер: 0},
 	{ПокупкиВПриложенияхIAP: 0},
 	{NWjs: 0},
+	{VKBridge: 0},
+	{Спрайт14: 0},
 	{kni: 0},
 	{score: 0},
 	{levels: 0},
