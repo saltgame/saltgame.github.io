@@ -4728,6 +4728,37 @@ WindowY(){return this._windowY},WindowWidth(){return this._windowWidth},WindowHe
 }
 
 {
+'use strict';{const C3=self.C3;C3.Plugins.Camera3D=class Camera3DPlugin extends C3.SDKPluginBase{constructor(opts){super(opts)}Release(){super.Release()}}}
+{const C3=self.C3;C3.Plugins.Camera3D.Type=class Camera3DType extends C3.SDKTypeBase{constructor(objectClass){super(objectClass)}Release(){super.Release()}OnCreate(){}GetScriptInterfaceClass(){return self.I3DCameraObjectType}};let cameraObjectType=null;function GetCameraInstance(){return cameraObjectType.GetSingleGlobalInstance().GetSdkInstance()}function GetLayout(){return cameraObjectType.GetRuntime().GetMainRunningLayout()}const LAYOUT_AXES=new Map([["x",0],["y",1],["z",2]]);const CAMERA_AXES=
+new Map([["forward",0],["up",1],["right",2]]);const MOVE_WHICH=new Map([["both",0],["camera",1],["look",2]]);self.I3DCameraObjectType=class I3DCameraObjectType extends self.IObjectClass{constructor(objectType){super(objectType);cameraObjectType=objectType}lookAtPosition(camX,camY,camZ,lookX,lookY,lookZ,upX,upY,upZ){GetCameraInstance()._LookAtPosition(camX,camY,camZ,lookX,lookY,lookZ,upX,upY,upZ)}lookParallelToLayout(camX,camY,camZ,lookAngle){GetCameraInstance()._LookAtPosition(camX,camY,camZ,camX+
+Math.cos(lookAngle),camY+Math.sin(lookAngle),camZ,0,0,1)}restore2DCamera(){GetCameraInstance()._Restore2DCamera()}moveAlongLayoutAxis(distance,axisStr,whichStr){if(!LAYOUT_AXES.has(axisStr))throw new Error("invalid axis");if(!MOVE_WHICH.has(whichStr))throw new Error("invalid which");const axis=LAYOUT_AXES.get(axisStr);const which=MOVE_WHICH.get(whichStr);GetCameraInstance()._MoveAlongLayoutAxis(distance,axis,which)}moveAlongCameraAxis(distance,axisStr,whichStr){if(!CAMERA_AXES.has(axisStr))throw new Error("invalid axis");
+if(!MOVE_WHICH.has(whichStr))throw new Error("invalid which");const axis=CAMERA_AXES.get(axisStr);const which=MOVE_WHICH.get(whichStr);GetCameraInstance()._MoveAlongCameraAxis(distance,axis,which)}getCameraPosition(){const vec=GetLayout().Get3DCameraPosition();return[vec[0],vec[1],vec[2]]}getLookPosition(){const vec=GetLayout().Get3DCameraLookAt();return[vec[0],vec[1],vec[2]]}getUpVector(){const vec=GetCameraInstance()._GetUpVector();return[vec[0],vec[1],vec[2]]}getRightVector(){const vec=GetCameraInstance()._GetRightVector();
+return[vec[0],vec[1],vec[2]]}getForwardVector(){const vec=GetCameraInstance()._GetForwardVector();return[vec[0],vec[1],vec[2]]}get zScale(){return GetCameraInstance().GetRuntime().GetZScaleFactor()}}}
+{const C3=self.C3;const glMatrix=self.glMatrix;const vec3=glMatrix.vec3;const quat=glMatrix.quat;const tempVec3=vec3.create();C3.Plugins.Camera3D.Instance=class Camera3DInstance extends C3.SDKInstanceBase{constructor(inst,properties){super(inst);this._camRotateX=0;this._camRotateY=Math.PI/2;this._cameraRotateQuat=quat.create();this._forwardVec=vec3.create();this._rightVec=vec3.create();this._upVec=vec3.create();this._SetDefaultVectors()}_SetDefaultVectors(){vec3.set(this._forwardVec,0,0,-1);vec3.set(this._rightVec,
+1,0,0);vec3.set(this._upVec,0,1,0)}_GetForwardVector(){return this._forwardVec}_GetRightVector(){return this._rightVec}_GetUpVector(){return this._upVec}_LookAtPosition(camX,camY,camZ,lookX,lookY,lookZ,upX,upY,upZ){const layout=this._runtime.GetMainRunningLayout();layout.Set3DCameraEnabled(true);layout.Set3DCameraOrientation(camX,camY,camZ,lookX,lookY,lookZ,upX,upY,upZ);vec3.set(this._forwardVec,lookX-camX,lookY-camY,lookZ-camZ);vec3.normalize(this._forwardVec,this._forwardVec);vec3.cross(this._rightVec,
+layout.Get3DCameraUpVector(),this._forwardVec);vec3.normalize(this._rightVec,this._rightVec);vec3.cross(this._upVec,this._forwardVec,this._rightVec);vec3.normalize(this._upVec,this._upVec);vec3.set(tempVec3,0,0,1);quat.rotationTo(this._cameraRotateQuat,this._upVec,tempVec3)}_Restore2DCamera(){this._runtime.GetMainRunningLayout().Set3DCameraEnabled(false);this._SetDefaultVectors()}_SetPosition(x,y,z,which){const layout=this._runtime.GetMainRunningLayout();const cam=layout.Get3DCameraPosition();const look=
+layout.Get3DCameraLookAt();const up=layout.Get3DCameraUpVector();let camX=cam[0];let camY=cam[1];let camZ=cam[2];let lookX=look[0];let lookY=look[1];let lookZ=look[2];if(which===0){const lookDx=lookX-camX;const lookDy=lookY-camY;const lookDz=lookZ-camZ;camX=x;camY=y;camZ=z;lookX=camX+lookDx;lookY=camY+lookDy;lookZ=camZ+lookDz}else{lookX=x;lookY=y;lookZ=z}layout.Set3DCameraEnabled(true);layout.Set3DCameraOrientation(camX,camY,camZ,lookX,lookY,lookZ,up[0],up[1],up[2])}_MoveAlongLayoutAxis(distance,
+axis,which){if(distance===0)return;let dx=0,dy=0,dz=0;if(axis===0)dx=distance;else if(axis===1)dy=distance;else dz=distance;vec3.set(tempVec3,dx,dy,dz);const layout=this._runtime.GetMainRunningLayout();const camVec=layout.Get3DCameraPosition();const lookVec=layout.Get3DCameraLookAt();if(which===0||which===1)vec3.add(camVec,camVec,tempVec3);if(which===0||which===2)vec3.add(lookVec,lookVec,tempVec3);layout.Set3DCameraChanged()}_MoveAlongCameraAxis(distance,axis,which){if(distance===0)return;let dx=
+0,dy=0,dz=0;if(axis===0){dx=this._forwardVec[0]*distance;dy=this._forwardVec[1]*distance;dz=this._forwardVec[2]*distance}else if(axis===1){dx=this._upVec[0]*distance;dy=this._upVec[1]*distance;dz=this._upVec[2]*distance}else{dx=this._rightVec[0]*distance;dy=this._rightVec[1]*distance;dz=this._rightVec[2]*distance}vec3.set(tempVec3,dx,dy,dz);const layout=this._runtime.GetMainRunningLayout();const camVec=layout.Get3DCameraPosition();const lookVec=layout.Get3DCameraLookAt();if(which===0||which===1)vec3.add(camVec,
+camVec,tempVec3);if(which===0||which===2)vec3.add(lookVec,lookVec,tempVec3);layout.Set3DCameraChanged()}_RotateCamera(rotateX,rotateY,minPolar,maxPolar){if(rotateX===0&&rotateY===0)return;minPolar=Math.max(minPolar,0);maxPolar=Math.min(maxPolar,C3.toRadians(179.9));this._camRotateX=C3.clampAngle(this._camRotateX+rotateX);this._camRotateY=C3.clamp(this._camRotateY+rotateY,minPolar,maxPolar);const lookX=Math.sin(this._camRotateY)*Math.cos(this._camRotateX);const lookY=Math.sin(this._camRotateY)*Math.sin(this._camRotateX);
+const lookZ=Math.cos(this._camRotateY);const lookVec=tempVec3;vec3.set(lookVec,lookX,lookY,lookZ);vec3.transformQuat(lookVec,lookVec,this._cameraRotateQuat);const layout=this._runtime.GetMainRunningLayout();const cam=layout.Get3DCameraPosition();const up=layout.Get3DCameraUpVector();const zScale=this._runtime.GetZScaleFactor();layout.Set3DCameraOrientation(cam[0],cam[1],cam[2],cam[0]+lookVec[0],cam[1]+lookVec[1],cam[2]+lookVec[2]/zScale,up[0],up[1],up[2])}GetDebuggerProperties(){const camPos=this._runtime.GetMainRunningLayout().Get3DCameraPosition();
+const lookPos=this._runtime.GetMainRunningLayout().Get3DCameraLookAt();const prefix="plugins.camera3d";return[{title:prefix+".debugger.z-axis.title",properties:[{name:prefix+".properties.z-scale.name",value:this._runtime.GetZScaleFactor()},{name:prefix+".properties.default-camera-z.name",value:this._runtime.GetDefaultCameraZ()}]},{title:prefix+".debugger.camera.title",properties:[{name:prefix+".debugger.camera.camera-x",value:camPos[0]},{name:prefix+".debugger.camera.camera-y",value:camPos[1]},{name:prefix+
+".debugger.camera.camera-z",value:camPos[2]},{name:prefix+".debugger.camera.look-x",value:lookPos[0]},{name:prefix+".debugger.camera.look-y",value:lookPos[1]},{name:prefix+".debugger.camera.look-z",value:lookPos[2]},{name:prefix+".debugger.camera.x-rotation",value:C3.toDegrees(this._camRotateX)},{name:prefix+".debugger.camera.y-rotation",value:C3.toDegrees(this._camRotateY)}]},{title:prefix+".debugger.vectors.title",properties:[{name:prefix+".debugger.vectors.up-x",value:this._upVec[0]},{name:prefix+
+".debugger.vectors.up-y",value:this._upVec[1]},{name:prefix+".debugger.vectors.up-z",value:this._upVec[2]},{name:prefix+".debugger.vectors.forward-x",value:this._forwardVec[0]},{name:prefix+".debugger.vectors.forward-y",value:this._forwardVec[1]},{name:prefix+".debugger.vectors.forward-z",value:this._forwardVec[2]},{name:prefix+".debugger.vectors.right-x",value:this._rightVec[0]},{name:prefix+".debugger.vectors.right-y",value:this._rightVec[1]},{name:prefix+".debugger.vectors.right-z",value:this._rightVec[2]}]}]}}}
+{const C3=self.C3;C3.Plugins.Camera3D.Cnds={}}
+{const C3=self.C3;C3.Plugins.Camera3D.Acts={LookAtPosition(camX,camY,camZ,lookX,lookY,lookZ,upX,upY,upZ){this._LookAtPosition(camX,camY,camZ,lookX,lookY,lookZ,upX,upY,upZ)},LookParallelToLayout(camX,camY,camZ,lookAngle){lookAngle=C3.toRadians(lookAngle);this._LookAtPosition(camX,camY,camZ,camX+Math.cos(lookAngle),camY+Math.sin(lookAngle),camZ,0,0,1)},Restore2DCamera(){this._Restore2DCamera()},SetPosition(x,y,z,which){this._SetPosition(x,y,z,which)},MoveAlongLayoutAxis(distance,axis,which){this._MoveAlongLayoutAxis(distance,
+axis,which)},MoveAlongCameraAxis(distance,axis,which){this._MoveAlongCameraAxis(distance,axis,which)},RotateCamera(rotateX,rotateY,minPolar,maxPolar){this._RotateCamera(C3.toRadians(rotateX),C3.toRadians(rotateY),C3.toRadians(minPolar),C3.toRadians(maxPolar))}}}
+{const C3=self.C3;C3.Plugins.Camera3D.Exps={CameraX(){return this._runtime.GetMainRunningLayout().Get3DCameraPosition()[0]},CameraY(){return this._runtime.GetMainRunningLayout().Get3DCameraPosition()[1]},CameraZ(){return this._runtime.GetMainRunningLayout().Get3DCameraPosition()[2]},LookX(){return this._runtime.GetMainRunningLayout().Get3DCameraLookAt()[0]},LookY(){return this._runtime.GetMainRunningLayout().Get3DCameraLookAt()[1]},LookZ(){return this._runtime.GetMainRunningLayout().Get3DCameraLookAt()[2]},
+UpX(){return this._upVec[0]},UpY(){return this._upVec[1]},UpZ(){return this._upVec[2]},ForwardX(){return this._forwardVec[0]},ForwardY(){return this._forwardVec[1]},ForwardZ(){return this._forwardVec[2]},RightX(){return this._rightVec[0]},RightY(){return this._rightVec[1]},RightZ(){return this._rightVec[2]},CameraXRotation(){return C3.toDegrees(this._camRotateX)},CameraYRotation(){return C3.toDegrees(this._camRotateY)},ZScale(){return this._runtime.GetZScaleFactor()},DefaultCameraZ(){return this._runtime.GetDefaultCameraZ()},
+ViewportTopLeftX(layerParam){const layer=this._runtime.GetCurrentLayout().GetLayer(layerParam);if(!layer)return 0;return layer.CanvasCssToLayer(0,0,layer.GetZElevation())[0]},ViewportTopLeftY(layerParam){const layer=this._runtime.GetCurrentLayout().GetLayer(layerParam);if(!layer)return 0;return layer.CanvasCssToLayer(0,0,layer.GetZElevation())[1]},ViewportTopRightX(layerParam){const layer=this._runtime.GetCurrentLayout().GetLayer(layerParam);if(!layer)return 0;return layer.CanvasCssToLayer(this._runtime.GetCanvasManager().GetCssWidth(),
+0,layer.GetZElevation())[0]},ViewportTopRightY(layerParam){const layer=this._runtime.GetCurrentLayout().GetLayer(layerParam);if(!layer)return 0;return layer.CanvasCssToLayer(this._runtime.GetCanvasManager().GetCssWidth(),0,layer.GetZElevation())[1]},ViewportBottomRightX(layerParam){const layer=this._runtime.GetCurrentLayout().GetLayer(layerParam);if(!layer)return 0;const canvasManager=this._runtime.GetCanvasManager();return layer.CanvasCssToLayer(canvasManager.GetCssWidth(),canvasManager.GetCssHeight(),
+layer.GetZElevation())[0]},ViewportBottomRightY(layerParam){const layer=this._runtime.GetCurrentLayout().GetLayer(layerParam);if(!layer)return 0;const canvasManager=this._runtime.GetCanvasManager();return layer.CanvasCssToLayer(canvasManager.GetCssWidth(),canvasManager.GetCssHeight(),layer.GetZElevation())[1]},ViewportBottomLeftX(layerParam){const layer=this._runtime.GetCurrentLayout().GetLayer(layerParam);if(!layer)return 0;return layer.CanvasCssToLayer(0,this._runtime.GetCanvasManager().GetCssHeight(),
+layer.GetZElevation())[0]},ViewportBottomLeftY(layerParam){const layer=this._runtime.GetCurrentLayout().GetLayer(layerParam);if(!layer)return 0;return layer.CanvasCssToLayer(0,this._runtime.GetCanvasManager().GetCssHeight(),layer.GetZElevation())[1]},LayerToCanvasX(layerParam,x,y,z){const layer=this._runtime.GetCurrentLayout().GetLayer(layerParam);return layer?layer.LayerToCanvasCss(x,y,z)[0]:0},LayerToCanvasY(layerParam,x,y,z){const layer=this._runtime.GetCurrentLayout().GetLayer(layerParam);return layer?
+layer.LayerToCanvasCss(x,y,z)[1]:0},CanvasToLayerX(layerParam,x,y,layerZ){const layer=this._runtime.GetCurrentLayout().GetLayer(layerParam);return layer?layer.CanvasCssToLayer(x,y,layerZ)[0]:0},CanvasToLayerY(layerParam,x,y,layerZ){const layer=this._runtime.GetCurrentLayout().GetLayer(layerParam);return layer?layer.CanvasCssToLayer(x,y,layerZ)[1]:0}}};
+
+}
+
+{
 'use strict';{const C3=self.C3;C3.Behaviors.Bullet=class BulletBehavior extends C3.SDKBehaviorBase{constructor(opts){super(opts)}Release(){super.Release()}}}{const C3=self.C3;C3.Behaviors.Bullet.Type=class BulletType extends C3.SDKBehaviorTypeBase{constructor(behaviorType){super(behaviorType)}Release(){super.Release()}OnCreate(){}}}
 {const C3=self.C3;const C3X=self.C3X;const IBehaviorInstance=self.IBehaviorInstance;const SPEED=0;const ACCELERATION=1;const GRAVITY=2;const BOUNCE_OFF_SOLIDS=3;const SET_ANGLE=4;const STEPPING=5;const ENABLE=6;C3.Behaviors.Bullet.Instance=class BulletInstance extends C3.SDKBehaviorInstanceBase{constructor(behInst,properties){super(behInst);const wi=this.GetWorldInfo();this._speed=0;this._acc=0;this._g=0;this._bounceOffSolid=false;this._setAngle=false;this._isStepping=false;this._isEnabled=true;this._dx=
 0;this._dy=0;this._lastX=wi.GetX();this._lastY=wi.GetY();this._lastKnownAngle=wi.GetAngle();this._travelled=0;this._stepSize=Math.min(Math.abs(wi.GetWidth()),Math.abs(wi.GetHeight())/2);this._stopStepping=false;if(properties){this._speed=properties[SPEED];this._acc=properties[ACCELERATION];this._g=properties[GRAVITY];this._bounceOffSolid=!!properties[BOUNCE_OFF_SOLIDS];this._setAngle=!!properties[SET_ANGLE];this._isStepping=!!properties[STEPPING];this._isEnabled=!!properties[ENABLE]}const a=wi.GetAngle();
@@ -5112,17 +5143,25 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.CORDOVAIAP,
 		C3.Plugins.NodeWebkit,
 		C3.Plugins.VKBridge,
+		C3.Plugins.Camera3D,
 		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Plugins.advert.Acts.CreateInterstitial,
 		C3.Plugins.System.Cnds.CompareVar,
 		C3.Plugins.advert.Acts.ShowInterstitial,
+		C3.Plugins.VKBridge.Acts.ShowAds,
 		C3.Plugins.Mouse.Cnds.OnClick,
 		C3.Plugins.Mouse.Cnds.IsOverObject,
 		C3.Plugins.VKBridge.Acts.ShowInvite,
+		C3.Plugins.System.Cnds.TriggerOnce,
+		C3.Plugins.VKBridge.Acts.BridgeConnect,
+		C3.Plugins.VKBridge.Cnds.BridgeConnectSuccess,
+		C3.Plugins.System.Acts.SetVar,
+		C3.Plugins.VKBridge.Acts.Authorization,
+		C3.Plugins.VKBridge.Acts.AppGetClient,
+		C3.Plugins.VKBridge.Cnds.AppGetClientSuccess,
 		C3.Plugins.Sprite.Cnds.CompareFrame,
 		C3.Plugins.Sprite.Cnds.IsOutsideLayout,
-		C3.Plugins.System.Cnds.TriggerOnce,
 		C3.Plugins.Sprite.Acts.Spawn,
 		C3.Plugins.System.Acts.Wait,
 		C3.Plugins.Sprite.Acts.Destroy,
@@ -5155,7 +5194,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.CreateObject,
 		C3.Plugins.System.Acts.RestartLayout,
 		C3.Behaviors.Fade.Acts.RestartFade,
-		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.Sprite.Acts.SetPos,
 		C3.Plugins.Text.Acts.SetFontColor,
 		C3.Plugins.Text.Acts.SetAngle
@@ -5258,11 +5296,17 @@ self.C3_JsPropNameTable = [
 	{NWjs: 0},
 	{VKBridge: 0},
 	{Спрайт14: 0},
+	{Спрайт15: 0},
+	{"3DКамера": 0},
 	{kni: 0},
 	{score: 0},
 	{levels: 0},
 	{Money: 0},
-	{need: 0}
+	{need: 0},
+	{client: 0},
+	{loadVKBridge: 0},
+	{VKBridgeConnected: 0},
+	{VKBridgeCurrentAdsTipe: 0}
 ];
 }
 
@@ -5370,6 +5414,10 @@ self.C3_ExpressionFuncs = [
 			const v0 = p._GetNode(0).GetVar();
 			return () => v0.GetValue();
 		},
+		() => "off",
+		() => "",
+		() => "on",
+		() => "VKbridge.clientplatform",
 		() => "Wood and knife",
 		() => 8,
 		() => 1,
@@ -5382,7 +5430,6 @@ self.C3_ExpressionFuncs = [
 		() => "2",
 		() => "4",
 		() => "5",
-		() => "",
 		() => -3,
 		() => "variables",
 		() => "Scores",
@@ -5436,24 +5483,24 @@ self.C3_ExpressionFuncs = [
 		() => 4,
 		() => 1200,
 		() => 1.5,
-		() => 36,
+		() => 32,
 		() => 1250,
 		() => 6,
 		() => "7",
 		() => 7,
-		() => 1700,
+		() => 1600,
 		() => "8",
 		() => 28,
 		() => 2000,
 		() => "9",
 		() => 9,
-		() => 40,
+		() => 33,
 		() => 2500,
 		() => "10",
-		() => 38,
+		() => 2700,
 		() => "11",
-		() => 3000,
 		() => 11,
+		() => 3000,
 		() => 0.5,
 		() => "12",
 		() => "13",
