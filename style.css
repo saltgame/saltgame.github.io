@@ -62,3 +62,8 @@ html, body, canvas {
 }
 
 
+@font-face {
+	font-family: 'roundfitlowercaseextended';
+	src: url('fonts/roundfitlowercaseextended.ttf') format('truetype');
+}
+
