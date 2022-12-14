@@ -5227,6 +5227,23 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.LocalStorage,
 		C3.Plugins.Dictionary,
 		C3.Plugins.System.Cnds.IsGroupActive,
+		C3.Plugins.LocalStorage.Cnds.OnItemGet,
+		C3.Plugins.Dictionary.Acts.JSONLoad,
+		C3.Plugins.LocalStorage.Exps.ItemValue,
+		C3.Plugins.System.Acts.SetVar,
+		C3.Plugins.Dictionary.Exps.Get,
+		C3.Plugins.System.Cnds.Every,
+		C3.Plugins.LocalStorage.Acts.SetItem,
+		C3.Plugins.Dictionary.Exps.AsJSON,
+		C3.Plugins.System.Cnds.OnLoadFinished,
+		C3.Plugins.LocalStorage.Acts.CheckItemExists,
+		C3.Plugins.LocalStorage.Cnds.OnItemExists,
+		C3.Plugins.LocalStorage.Acts.GetItem,
+		C3.Plugins.System.Cnds.OnLayoutStart,
+		C3.Plugins.Dictionary.Cnds.IsEmpty,
+		C3.Plugins.Dictionary.Acts.AddKey,
+		C3.Plugins.System.Cnds.EveryTick,
+		C3.Plugins.Dictionary.Acts.SetKey,
 		C3.Plugins.System.Cnds.CompareVar,
 		C3.Plugins.VKBridge.Acts.AdsMobile,
 		C3.Plugins.VKBridge.Acts.ShowAds,
@@ -5235,12 +5252,11 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Cnds.IsOutsideLayout,
 		C3.Plugins.Sprite.Acts.Spawn,
 		C3.Plugins.Sprite.Acts.SetAnimFrame,
+		C3.Plugins.System.Acts.Wait,
 		C3.Plugins.Sprite.Cnds.OnCreated,
 		C3.Plugins.System.Acts.SubVar,
-		C3.Plugins.System.Acts.Wait,
 		C3.Plugins.System.Cnds.TriggerOnce,
 		C3.Plugins.Sprite.Acts.Destroy,
-		C3.Plugins.System.Cnds.Every,
 		C3.Behaviors.Bullet.Cnds.CompareSpeed,
 		C3.Plugins.Sprite.Cnds.IsAnimPlaying,
 		C3.Behaviors.Bullet.Acts.SetAngleOfMotion,
@@ -5266,14 +5282,11 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.Bullet.Acts.SetGravity,
 		C3.Behaviors.Physics.Acts.EnableCollisions,
 		C3.Behaviors.Bullet.Acts.SetBounceOffSolids,
-		C3.Plugins.System.Cnds.EveryTick,
 		C3.Plugins.Text.Acts.SetText,
 		C3.Behaviors.Physics.Acts.ApplyForceAtAngle,
 		C3.Plugins.System.Acts.CreateObject,
 		C3.Plugins.System.Acts.RestartLayout,
-		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Behaviors.Fade.Acts.RestartFade,
-		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.Sprite.Acts.SetPos,
 		C3.Plugins.Text.Acts.SetFontColor,
 		C3.Plugins.Text.Acts.SetAngle,
@@ -5569,16 +5582,97 @@ function or(l, r)
 }
 
 self.C3_ExpressionFuncs = [
-		() => "REKLAMA",
-		() => 0,
+		() => "Saves",
+		() => "save1",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0();
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("levels");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("Money");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka10");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka11");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka12");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka2");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka3");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka4");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka5");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka6");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka7");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka8");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka9");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_animation");
+		},
+		() => 3,
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject();
+		},
+		() => "knife_proverka10",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => v0.GetValue();
 		},
+		() => "knife_proverka11",
+		() => "knife_proverka12",
+		() => "knife_proverka2",
+		() => "knife_proverka3",
+		() => "knife_proverka4",
+		() => "knife_proverka5",
+		() => "knife_proverka6",
+		() => "knife_proverka7",
+		() => "knife_proverka8",
+		() => "knife_proverka9",
+		() => "levels",
+		() => "Money",
+		() => "knife_animation",
+		() => "REKLAMA",
+		() => 0,
 		() => "Wood and knife",
 		() => 1,
+		() => 0.3,
 		() => 0.1,
-		() => 3,
 		() => 2,
 		() => 8,
 		() => "1",
@@ -5587,9 +5681,10 @@ self.C3_ExpressionFuncs = [
 		() => "2",
 		() => -3,
 		() => "3",
-		() => 285,
-		() => 275,
 		() => "4",
+		() => 260,
+		() => 263,
+		() => 269,
 		() => "Apple",
 		() => 30,
 		() => "Orange",
@@ -5606,10 +5701,6 @@ self.C3_ExpressionFuncs = [
 		() => 700,
 		() => -15,
 		() => -7,
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject();
-		},
 		() => 500,
 		() => 150,
 		() => "Gift",
@@ -5662,10 +5753,10 @@ self.C3_ExpressionFuncs = [
 		() => 400,
 		() => 0.8,
 		() => "5",
-		() => 22,
 		() => "6",
+		() => 900,
 		() => "7",
-		() => 950,
+		() => 1050,
 		() => "8",
 		() => 1100,
 		() => "9",
@@ -5683,6 +5774,7 @@ self.C3_ExpressionFuncs = [
 		() => 2000,
 		() => "13",
 		() => 13,
+		() => 32,
 		() => 0.9,
 		() => "14",
 		() => 14,
@@ -5708,9 +5800,11 @@ self.C3_ExpressionFuncs = [
 		() => 21,
 		() => 40,
 		() => "22",
+		() => 22,
 		() => 3200,
 		() => "MENU",
 		() => 1600,
+		() => 950,
 		() => -1000,
 		() => "knife2",
 		() => -500,
