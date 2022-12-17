@@ -5296,34 +5296,17 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Behaviors.Physics.Acts.EnableCollisions,
 		C3.Plugins.Sprite.Cnds.IsOnScreen,
-		C3.Plugins.LocalStorage.Cnds.OnItemGet,
-		C3.Plugins.Dictionary.Acts.JSONLoad,
-		C3.Plugins.LocalStorage.Exps.ItemValue,
-		C3.Plugins.System.Acts.SetVar,
-		C3.Plugins.Dictionary.Exps.Get,
-		C3.Plugins.System.Cnds.Every,
-		C3.Plugins.LocalStorage.Acts.SetItem,
-		C3.Plugins.Dictionary.Exps.AsJSON,
-		C3.Plugins.System.Cnds.OnLoadFinished,
-		C3.Plugins.LocalStorage.Acts.CheckItemExists,
-		C3.Plugins.LocalStorage.Cnds.OnItemExists,
-		C3.Plugins.LocalStorage.Acts.GetItem,
-		C3.Plugins.Dictionary.Cnds.IsEmpty,
-		C3.Plugins.Dictionary.Acts.AddKey,
-		C3.Plugins.System.Cnds.EveryTick,
-		C3.Plugins.Dictionary.Acts.SetKey,
-		C3.Plugins.Eponesh_GameScore.Acts.AdsShowFullscreen,
+		C3.Plugins.Sprite.Cnds.CompareFrame,
 		C3.Plugins.System.Cnds.CompareVar,
 		C3.Plugins.System.Cnds.TriggerOnce,
 		C3.Plugins.Sprite.Acts.SetPos,
 		C3.Behaviors.Pin.Acts.PinByImagePoint,
 		C3.Plugins.System.Acts.SetTimescale,
 		C3.Plugins.Touch.Cnds.OnTapGestureObject,
-		C3.Plugins.Eponesh_GameScore.Acts.AdsShowRewarded,
-		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsRewardedReward,
+		C3.Plugins.VKBridge.Acts.ShowInvite,
+		C3.Plugins.VKBridge.Acts.AdsMobile,
 		C3.Plugins.System.Acts.AddVar,
 		C3.Plugins.Touch.Cnds.OnTapGesture,
-		C3.Plugins.Sprite.Cnds.CompareFrame,
 		C3.Plugins.Sprite.Cnds.IsOutsideLayout,
 		C3.Plugins.Sprite.Acts.Spawn,
 		C3.Plugins.Sprite.Acts.SetAnimFrame,
@@ -5332,6 +5315,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.SubVar,
 		C3.Plugins.System.Acts.Wait,
 		C3.Plugins.Sprite.Acts.Destroy,
+		C3.Plugins.System.Cnds.Every,
 		C3.Behaviors.Bullet.Cnds.CompareSpeed,
 		C3.Plugins.Sprite.Cnds.IsAnimPlaying,
 		C3.Behaviors.Bullet.Acts.SetAngleOfMotion,
@@ -5353,6 +5337,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Exps.Y,
 		C3.Behaviors.Bullet.Acts.SetGravity,
 		C3.Behaviors.Bullet.Acts.SetBounceOffSolids,
+		C3.Plugins.System.Cnds.EveryTick,
 		C3.Plugins.Text.Acts.SetText,
 		C3.Behaviors.Physics.Acts.ApplyForceAtAngle,
 		C3.Plugins.System.Cnds.Compare,
@@ -5360,6 +5345,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.SetObjectTimescale,
 		C3.Behaviors.Fade.Acts.RestartFade,
 		C3.Plugins.Sprite.Cnds.IsOverlapping,
+		C3.Plugins.System.Acts.SetVar,
 		C3.Behaviors.Pin.Acts.Unpin,
 		C3.Behaviors.Turret.Acts.AddTarget,
 		C3.Behaviors.Turret.Acts.SetEnabled,
@@ -5674,101 +5660,21 @@ function or(l, r)
 
 self.C3_ExpressionFuncs = [
 		() => "stolknoveniya",
-		() => "Saves",
-		() => "save1",
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => f0();
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("levels");
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("Money");
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("knife_proverka10");
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("knife_proverka11");
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("knife_proverka12");
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("knife_proverka2");
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("knife_proverka3");
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("knife_proverka4");
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("knife_proverka5");
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("knife_proverka6");
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("knife_proverka7");
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("knife_proverka8");
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("knife_proverka9");
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject("knife_animation");
-		},
-		() => 3,
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject();
-		},
-		() => "knife_proverka10",
+		() => 1,
+		() => "REKLAMA",
+		() => 0,
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => v0.GetValue();
 		},
-		() => "knife_proverka11",
-		() => "knife_proverka12",
-		() => "knife_proverka2",
-		() => "knife_proverka3",
-		() => "knife_proverka4",
-		() => "knife_proverka5",
-		() => "knife_proverka6",
-		() => "knife_proverka7",
-		() => "knife_proverka8",
-		() => "knife_proverka9",
-		() => "levels",
-		() => "Money",
-		() => "knife_animation",
-		() => "REKLAMA",
-		() => 0,
 		() => 950,
 		() => 500,
-		() => 1,
 		() => 21,
-		() => -700,
 		() => 100,
+		() => -700,
 		() => "Wood and knife",
 		() => 0.31,
+		() => 3,
 		() => 2,
 		() => 8,
 		() => "1",
@@ -5800,6 +5706,10 @@ self.C3_ExpressionFuncs = [
 		() => 700,
 		() => -15,
 		() => -7,
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject();
+		},
 		() => 150,
 		() => "Gift",
 		p => {
