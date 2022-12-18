@@ -1,7 +1,7 @@
 {
 	"name": "Juicy throw",
 	"short_name": "Juicy throw",
-	"description": "2160x 1080",
+	"description": "2000x 1080",
 	"start_url": "index.html",
 	"display": "fullscreen",
 	"orientation": "landscape",

@@ -4836,6 +4836,266 @@ for(const key of this._data.keys()){this._curKey=key;eventSheetManager.PushCopyS
 }
 
 {
+"use strict";
+
+{
+  C3.Plugins.GD_SDK = class SingleGlobalPlugin extends C3.SDKPluginBase {
+    constructor(opts) {
+      super(opts);
+    }
+
+    Release() {
+      super.Release();
+    }
+  };
+}
+}
+
+{
+"use strict";
+
+{
+	C3.Plugins.GD_SDK.Type = class SingleGlobalType extends C3.SDKTypeBase
+	{
+		constructor(objectClass)
+		{
+			super(objectClass);
+		}
+		
+		Release()
+		{
+			super.Release();
+		}
+		
+		OnCreate()
+		{	
+		}
+	};
+}
+}
+
+{
+"use strict";
+{
+  C3.Plugins.GD_SDK.Instance = class SingleGlobalInstance extends C3.SDKInstanceBase {
+    constructor(inst, properties) {
+      super(inst);
+
+      // Initialise object properties
+      this._gameID = "";
+      this._sdkReady = false;
+      this._adPlaying = false;
+      this._adViewed = false;
+      this._giveReward = false;
+      this._preloadedAd = false;
+      this._available_adtypes = ["interstitial", "rewarded"];
+      this._levelSID = null;
+      this._scoreSID = null;
+
+      // note properties may be null in some cases
+      if (properties) {
+        this._gameID = properties[0];
+        this._levelSID = properties[1];
+        this._scoreSID = properties[2];
+      }
+
+      //   try {
+      //     if (this._runtime.IsPreview()) {
+      //       localStorage.setItem("gd_debug", true);
+      //       localStorage.setItem(
+      //         "gd_tag",
+      //         "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator="
+      //       );
+      //     } else {
+      //       localStorage.removeItem("gd_debug");
+      //       localStorage.removeItem("gd_tag");
+      //     }
+      //   } catch (e) {
+      //     localStorage.removeItem("gd_debug");
+      //     localStorage.removeItem("gd_tag");
+      //   }
+
+      window["GD_OPTIONS"] = {
+        gameId: this._gameID,
+        // "prefix": "gd_", // Set your own prefix in case you get id conflicts.
+        advertisementSettings: {
+          // "debug": true, // Enable IMA SDK debugging.
+          // "autoplay": false, // Don't use this because of browser video autoplay restrictions.
+          // "locale": "en", // Locale used in IMA SDK, this will localise the "Skip ad after x seconds" phrases.
+        },
+        onEvent: event => {
+          //https://github.com/GameDistribution/GD-HTML5
+          switch (event.name) {
+            case "SDK_GAME_START":
+              // advertisement done, resume game logic and unmute audio
+              this._adPlaying = false;
+              break;
+            case "SDK_GAME_PAUSE":
+              // pause game logic / mute audio
+              this._adPlaying = true;
+              break;
+            case "SDK_GDPR_TRACKING":
+              // this event is triggered when your user doesn't want to be tracked
+              break;
+            case "SDK_GDPR_TARGETING":
+              // this event is triggered when your user doesn't want personalised targeting of ads and such
+              break;
+            case "SDK_REWARDED_WATCH_COMPLETE":
+              // this event is triggered when your user doesn't want personalised targeting of ads and such
+              this._giveReward = true;
+              setTimeout(() => {
+                this._giveReward = false;
+              }, 5000);
+              break;
+            case "COMPLETE":
+              // this event is triggered when the user watched an entire ad
+              this._adViewed = true;
+              setTimeout(() => {
+                this._adViewed = false;
+              }, 5000);
+              break;
+            case "SDK_READY":
+              //   let debugBar = document.querySelector("#gdsdk__implementation");
+              //   if (debugBar) debugBar.remove();
+              this._sdkReady = true;
+              break;
+          }
+        }
+      };
+
+      //Load the SDK from the CDN
+      (function(d, s, id) {
+        var js,
+          fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//html5.api.gamedistribution.com/main.min.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      })(document, "script", "gamedistribution-jssdk");
+    }
+
+    Release() {
+      super.Release();
+    }
+
+    SaveToJson() {
+      return {
+        // data to be saved for savegames
+      };
+    }
+
+    LoadFromJson(o) {
+      // load state for savegames
+    }
+
+    PreloadRewardedAd() {
+      this._preloadedAd = false;
+
+      var gdsdk = window["gdsdk"];
+      if (gdsdk !== "undefined" && gdsdk.preloadAd !== "undefined") {
+        gdsdk
+          .preloadAd("rewarded")
+          .then(() => {
+            this._preloadedAd = true;
+          })
+          .catch(error => {
+            this._preloadedAd = false;
+          });
+      }
+    }
+
+    ShowAd(adType) {
+      var gdsdk = window["gdsdk"];
+      if (gdsdk !== "undefined" && gdsdk.showAd !== "undefined") {
+        gdsdk.showAd(adType);
+
+        if (adType === "rewarded") {
+          this._preloadedAd = false;
+        }
+      }
+    }
+
+    SendGameEvent() {
+      var scoreText = this._runtime.GetObjectClassBySID(this._scoreSID)._iObjectClass.getFirstInstance().text;
+      var levelText = this._runtime.GetObjectClassBySID(this._levelSID)._iObjectClass.getFirstInstance().text;
+      var score = parseInt(scoreText.trim().replace(/[^\d]/g,''));
+      var level = parseInt(levelText.trim().replace(/[^\d]/g,''));
+      if (gdsdk !== "undefined" && gdsdk.sendEvent !== "undefined" && level !== "undefined" && score !== "undefined") {
+        var obj = {
+          "eventName" : "game_event",
+          "data" : {
+            "level" : level,
+            "score" : score
+          }
+        };
+        gdsdk.sendEvent(obj);
+      }
+    }
+  };
+}
+
+}
+
+{
+"use strict";
+
+{
+  C3.Plugins.GD_SDK.Cnds = {
+    ResumeGame() {
+      return !this._adPlaying;
+    },
+    PauseGame() {
+      return this._adPlaying;
+    },
+    PreloadedAd() {
+      return this._preloadedAd;
+    },
+    AdViewed() {
+      return this._adViewed;
+    },
+    RewardPlayer() {
+      return this._giveReward;
+    }
+  };
+}
+
+}
+
+{
+"use strict";
+
+{
+  C3.Plugins.GD_SDK.Acts = {
+    ShowAd() {
+      this.ShowAd();
+    },
+    PreloadRewardedAd() {
+      this.PreloadRewardedAd();
+    },
+    ShowRewardedAd() {
+      this.ShowAd("rewarded");
+    },
+    SendGameEvent() {
+      this.SendGameEvent();
+    }
+  };
+}
+
+}
+
+{
+"use strict";
+
+{
+	C3.Plugins.GD_SDK.Exps =
+	{
+		
+	};
+}
+}
+
+{
 'use strict';{const C3=self.C3;C3.Behaviors.Bullet=class BulletBehavior extends C3.SDKBehaviorBase{constructor(opts){super(opts)}Release(){super.Release()}}}{const C3=self.C3;C3.Behaviors.Bullet.Type=class BulletType extends C3.SDKBehaviorTypeBase{constructor(behaviorType){super(behaviorType)}Release(){super.Release()}OnCreate(){}}}
 {const C3=self.C3;const C3X=self.C3X;const IBehaviorInstance=self.IBehaviorInstance;const SPEED=0;const ACCELERATION=1;const GRAVITY=2;const BOUNCE_OFF_SOLIDS=3;const SET_ANGLE=4;const STEPPING=5;const ENABLE=6;C3.Behaviors.Bullet.Instance=class BulletInstance extends C3.SDKBehaviorInstanceBase{constructor(behInst,properties){super(behInst);const wi=this.GetWorldInfo();this._speed=0;this._acc=0;this._g=0;this._bounceOffSolid=false;this._setAngle=false;this._isStepping=false;this._isEnabled=true;this._dx=
 0;this._dy=0;this._lastX=wi.GetX();this._lastY=wi.GetY();this._lastKnownAngle=wi.GetAngle();this._travelled=0;this._stepSize=Math.min(Math.abs(wi.GetWidth()),Math.abs(wi.GetHeight())/2);this._stopStepping=false;if(properties){this._speed=properties[SPEED];this._acc=properties[ACCELERATION];this._g=properties[GRAVITY];this._bounceOffSolid=!!properties[BOUNCE_OFF_SOLIDS];this._setAngle=!!properties[SET_ANGLE];this._isStepping=!!properties[STEPPING];this._isEnabled=!!properties[ENABLE]}const a=wi.GetAngle();
@@ -5292,6 +5552,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Dictionary,
 		C3.Plugins.Eponesh_GameScore,
 		C3.Behaviors.Turret,
+		C3.Plugins.GD_SDK,
 		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Behaviors.Physics.Acts.EnableCollisions,
@@ -5310,11 +5571,21 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.AddVar,
 		C3.Plugins.System.Cnds.CompareVar,
 		C3.Plugins.System.Cnds.TriggerOnce,
-		C3.Plugins.Touch.Cnds.OnTapGesture,
+		C3.Plugins.Eponesh_GameScore.Acts.AdsShowFullscreen,
+		C3.Plugins.Eponesh_GameScore.Acts.AdsShowRewarded,
+		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsRewardedReward,
+		C3.Plugins.System.Acts.SetVar,
+		C3.Plugins.Eponesh_GameScore.Cnds.IsAdsFullscreenPlaying,
+		C3.Plugins.Audio.Acts.StopAll,
+		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsRewardedStart,
+		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsFullscreenClose,
+		C3.Plugins.Audio.Acts.Play,
+		C3.Plugins.Eponesh_GameScore.Cnds.OnAdsRewardedClose,
+		C3.Plugins.Sprite.Acts.SetVisible,
+		C3.Plugins.Text.Acts.SetText,
 		C3.Plugins.Sprite.Cnds.IsOutsideLayout,
 		C3.Plugins.Sprite.Acts.Spawn,
 		C3.Plugins.Sprite.Acts.SetAnimFrame,
-		C3.Plugins.Keyboard.Cnds.OnKey,
 		C3.Plugins.System.Acts.SubVar,
 		C3.Plugins.Sprite.Acts.Destroy,
 		C3.Plugins.System.Cnds.Every,
@@ -5322,13 +5593,11 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Cnds.IsAnimPlaying,
 		C3.Behaviors.Bullet.Acts.SetAngleOfMotion,
 		C3.Plugins.Sprite.Cnds.OnCollision,
-		C3.Plugins.Audio.Acts.Play,
 		C3.Behaviors.Pin.Acts.PinByProperties,
 		C3.Behaviors.Bullet.Acts.SetSpeed,
 		C3.Behaviors.Rotate.Acts.SetEnabled,
 		C3.Behaviors.Rotate.Acts.SetSpeed,
 		C3.Plugins.System.Acts.CreateObject,
-		C3.Plugins.Audio.Acts.StopAll,
 		C3.Plugins.Sprite.Acts.SetAnim,
 		C3.Plugins.Sprite.Acts.SetAngle,
 		C3.Behaviors.Physics.Acts.SetEnabled,
@@ -5340,18 +5609,15 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.Bullet.Acts.SetGravity,
 		C3.Behaviors.Bullet.Acts.SetBounceOffSolids,
 		C3.Plugins.System.Cnds.EveryTick,
-		C3.Plugins.Text.Acts.SetText,
 		C3.Behaviors.Physics.Acts.ApplyForceAtAngle,
 		C3.Plugins.System.Cnds.Compare,
 		C3.Plugins.Text.Acts.SetVisible,
 		C3.Plugins.System.Acts.SetObjectTimescale,
 		C3.Behaviors.Fade.Acts.RestartFade,
 		C3.Plugins.Sprite.Cnds.IsOverlapping,
-		C3.Plugins.System.Acts.SetVar,
 		C3.Behaviors.Pin.Acts.Unpin,
 		C3.Behaviors.Turret.Acts.AddTarget,
 		C3.Behaviors.Turret.Acts.SetEnabled,
-		C3.Plugins.Sprite.Acts.SetVisible,
 		C3.Plugins.System.Cnds.Else,
 		C3.Behaviors.Sin.Acts.SetEnabled,
 		C3.Behaviors.Turret.Acts.ClearTargets,
@@ -5501,7 +5767,7 @@ self.C3_JsPropNameTable = [
 	{Спрайт18: 0},
 	{Спрайт19: 0},
 	{gold2: 0},
-	{Money_text2: 0},
+	{need_text2: 0},
 	{Частицы5: 0},
 	{"150Score": 0},
 	{pobednie_particles: 0},
@@ -5527,6 +5793,14 @@ self.C3_JsPropNameTable = [
 	{Синусоид3: 0},
 	{CAT_paw: 0},
 	{gold_plus1: 0},
+	{GameDistributionSDK: 0},
+	{Languages_button: 0},
+	{doska_languages: 0},
+	{rus: 0},
+	{eng: 0},
+	{krest4_lang: 0},
+	{Galochka: 0},
+	{pole: 0},
 	{ochki: 0},
 	{Семья1: 0},
 	{loadVKBridge: 0},
@@ -5560,7 +5834,9 @@ self.C3_JsPropNameTable = [
 	{knife_proverka9: 0},
 	{knife_proverka10: 0},
 	{knife_proverka11: 0},
-	{knife_proverka12: 0}
+	{knife_proverka12: 0},
+	{Lang: 0},
+	{learn: 0}
 ];
 }
 
@@ -5661,9 +5937,11 @@ function or(l, r)
 }
 
 self.C3_ExpressionFuncs = [
+		() => "Learn",
 		() => "stolknoveniya",
 		() => 1,
 		() => "REKLAMA",
+		() => "VK",
 		() => "",
 		() => 2.5,
 		() => 950,
@@ -5677,22 +5955,30 @@ self.C3_ExpressionFuncs = [
 			return () => v0.GetValue();
 		},
 		() => 2,
+		() => "Yandex",
+		() => "Languages",
+		() => 3,
+		() => 2000,
+		() => "наберите для победы",
+		() => "не хватает монет",
+		() => "collect to win:",
+		() => "not enough coins",
 		() => "Wood and knife",
 		() => 0.31,
-		() => 3,
 		() => 8,
 		() => "1",
 		() => 270,
 		() => 0.2,
-		() => 2050,
+		() => 1900,
+		() => 110,
 		() => -3,
 		() => "2",
 		() => "3",
 		() => "4",
-		() => 250,
-		() => 253,
-		() => 260,
-		() => 251,
+		() => 275,
+		() => 278,
+		() => 285,
+		() => 276,
 		() => "Apple",
 		() => 30,
 		() => -5,
@@ -5726,6 +6012,7 @@ self.C3_ExpressionFuncs = [
 		() => 4,
 		() => 6,
 		() => 7,
+		() => 250,
 		() => "giria",
 		() => 120,
 		() => 1500,
@@ -5757,7 +6044,6 @@ self.C3_ExpressionFuncs = [
 		() => "CAT",
 		() => 5000,
 		() => 92,
-		() => 2000,
 		() => "5",
 		() => 1.5,
 		() => "6",
