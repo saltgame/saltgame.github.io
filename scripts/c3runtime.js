@@ -5554,15 +5554,13 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.Turret,
 		C3.Plugins.GD_SDK,
 		C3.Plugins.System.Cnds.IsGroupActive,
-		C3.Plugins.System.Cnds.OnLayoutStart,
-		C3.Behaviors.Physics.Acts.EnableCollisions,
-		C3.Plugins.Sprite.Cnds.IsOnScreen,
-		C3.Plugins.Sprite.Cnds.CompareFrame,
 		C3.Plugins.System.Cnds.OnLoadFinished,
 		C3.Plugins.VKBridge.Acts.BridgeConnect,
 		C3.Plugins.Touch.Cnds.OnTapGestureObject,
 		C3.Plugins.VKBridge.Acts.ShowInvite,
+		C3.Plugins.VKBridge.Acts.JoinGroup,
 		C3.Plugins.Sprite.Cnds.OnCreated,
+		C3.Plugins.Sprite.Cnds.IsOnScreen,
 		C3.Plugins.System.Acts.Wait,
 		C3.Plugins.Sprite.Acts.SetPos,
 		C3.Behaviors.Pin.Acts.PinByImagePoint,
@@ -5571,14 +5569,31 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.AddVar,
 		C3.Plugins.System.Cnds.CompareVar,
 		C3.Plugins.System.Cnds.TriggerOnce,
-		C3.Plugins.Text.Acts.SetText,
 		C3.Plugins.System.Acts.SetVar,
+		C3.Plugins.Sprite.Acts.SetVisible,
+		C3.Plugins.System.Cnds.OnLayoutStart,
+		C3.Behaviors.Physics.Acts.EnableCollisions,
+		C3.Plugins.Sprite.Cnds.CompareFrame,
+		C3.Plugins.LocalStorage.Cnds.OnItemGet,
+		C3.Plugins.Dictionary.Acts.JSONLoad,
+		C3.Plugins.LocalStorage.Exps.ItemValue,
+		C3.Plugins.Dictionary.Exps.Get,
+		C3.Plugins.System.Cnds.Every,
+		C3.Plugins.LocalStorage.Acts.SetItem,
+		C3.Plugins.Dictionary.Exps.AsJSON,
+		C3.Plugins.LocalStorage.Acts.CheckItemExists,
+		C3.Plugins.LocalStorage.Cnds.OnItemExists,
+		C3.Plugins.LocalStorage.Acts.GetItem,
+		C3.Plugins.Dictionary.Cnds.IsEmpty,
+		C3.Plugins.Dictionary.Acts.AddKey,
+		C3.Plugins.System.Cnds.EveryTick,
+		C3.Plugins.Dictionary.Acts.SetKey,
+		C3.Plugins.Text.Acts.SetText,
+		C3.Plugins.Sprite.Acts.SetAnimFrame,
 		C3.Plugins.Sprite.Cnds.IsOutsideLayout,
 		C3.Plugins.Sprite.Acts.Spawn,
-		C3.Plugins.Sprite.Acts.SetAnimFrame,
 		C3.Plugins.System.Acts.SubVar,
 		C3.Plugins.Sprite.Acts.Destroy,
-		C3.Plugins.System.Cnds.Every,
 		C3.Behaviors.Bullet.Cnds.CompareSpeed,
 		C3.Plugins.Sprite.Cnds.IsAnimPlaying,
 		C3.Behaviors.Bullet.Acts.SetAngleOfMotion,
@@ -5600,7 +5615,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Exps.Y,
 		C3.Behaviors.Bullet.Acts.SetGravity,
 		C3.Behaviors.Bullet.Acts.SetBounceOffSolids,
-		C3.Plugins.System.Cnds.EveryTick,
 		C3.Behaviors.Physics.Acts.ApplyForceAtAngle,
 		C3.Plugins.System.Cnds.Compare,
 		C3.Plugins.Text.Acts.SetVisible,
@@ -5610,10 +5624,11 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.Pin.Acts.Unpin,
 		C3.Behaviors.Turret.Acts.AddTarget,
 		C3.Behaviors.Turret.Acts.SetEnabled,
-		C3.Plugins.Sprite.Acts.SetVisible,
-		C3.Plugins.System.Cnds.Else,
-		C3.Behaviors.Sin.Acts.SetEnabled,
 		C3.Behaviors.Turret.Acts.ClearTargets,
+		C3.Plugins.System.Cnds.Else,
+		C3.Plugins.Sprite.Acts.MoveToLayer,
+		C3.Plugins.Sprite.Acts.SetZElevation,
+		C3.Behaviors.Sin.Acts.SetEnabled,
 		C3.Plugins.System.Acts.RestartLayout,
 		C3.Plugins.Text.Acts.SetFontColor,
 		C3.Plugins.Text.Acts.SetAngle
@@ -5717,7 +5732,7 @@ self.C3_JsPropNameTable = [
 	{ПокупкиВПриложенияхIAP: 0},
 	{NWjs: 0},
 	{VKBridge: 0},
-	{Спрайт14: 0},
+	{invite_button: 0},
 	{Спрайт15: 0},
 	{"3DКамера": 0},
 	{Твинанимация: 0},
@@ -5736,21 +5751,21 @@ self.C3_JsPropNameTable = [
 	{sok_orange: 0},
 	{Спрайт17: 0},
 	{Список: 0},
-	{doska: 0},
+	{doska_knifesBIG: 0},
 	{knife1: 0},
 	{knife2: 0},
 	{knife3: 0},
-	{menuu: 0},
-	{krest: 0},
-	{ramka: 0},
+	{shop_knifes: 0},
+	{krest_doskaBIG_knifes: 0},
+	{ramka_knifes: 0},
 	{lock3: 0},
-	{doska2: 0},
+	{doska_knife_pokupka: 0},
 	{knife_buy3: 0},
-	{text_buy: 0},
+	{text_buy_knifes: 0},
 	{yes: 0},
-	{krest2: 0},
+	{krest_knife_pokupka: 0},
 	{ne_hvataet_monet: 0},
-	{coin_d: 0},
+	{coin_knifes: 0},
 	{knife4: 0},
 	{knife_buy4: 0},
 	{lock4: 0},
@@ -5778,8 +5793,8 @@ self.C3_JsPropNameTable = [
 	{Polka: 0},
 	{CAT_body: 0},
 	{Турель: 0},
-	{CAT_Head: 0},
 	{Синусоид2: 0},
+	{CAT_Head: 0},
 	{CAT_tail: 0},
 	{Спрайт24: 0},
 	{Спрайт12: 0},
@@ -5794,6 +5809,27 @@ self.C3_JsPropNameTable = [
 	{krest4_lang: 0},
 	{Galochka: 0},
 	{pole: 0},
+	{club_button: 0},
+	{hat: 0},
+	{doska_hatsBIG: 0},
+	{krest_doskaBIG_Hats: 0},
+	{hat1: 0},
+	{hat2: 0},
+	{hat3: 0},
+	{hat4: 0},
+	{lock_hat2: 0},
+	{lock_hat3: 0},
+	{lock_hat4: 0},
+	{hat_buy2: 0},
+	{hat_buy3: 0},
+	{hat_buy4: 0},
+	{doska_hat_pokupka: 0},
+	{text_buy_hats: 0},
+	{krest_hats_pokupka: 0},
+	{yes_hats: 0},
+	{shop_hats: 0},
+	{ramka_hats: 0},
+	{coin_hats: 0},
 	{ochki: 0},
 	{Семья1: 0},
 	{loadVKBridge: 0},
@@ -5817,6 +5853,17 @@ self.C3_JsPropNameTable = [
 	{knife_price10: 0},
 	{knife_price11: 0},
 	{knife_price12: 0},
+	{hat_price2: 0},
+	{hat_price3: 0},
+	{hat_price4: 0},
+	{hat_price5: 0},
+	{hat_price6: 0},
+	{hat_price7: 0},
+	{hat_price8: 0},
+	{hat_price9: 0},
+	{hat_price10: 0},
+	{hat_price11: 0},
+	{hat_price12: 0},
 	{knife_proverka2: 0},
 	{knife_proverka3: 0},
 	{knife_proverka4: 0},
@@ -5828,8 +5875,20 @@ self.C3_JsPropNameTable = [
 	{knife_proverka10: 0},
 	{knife_proverka11: 0},
 	{knife_proverka12: 0},
+	{hat_proverka2: 0},
+	{hat_proverka3: 0},
+	{hat_proverka4: 0},
+	{hat_proverka5: 0},
+	{hat_proverka6: 0},
+	{hat_proverka7: 0},
+	{hat_proverka8: 0},
+	{hat_proverka9: 0},
+	{hat_proverka10: 0},
+	{hat_proverka11: 0},
+	{hat_proverka12: 0},
 	{Lang: 0},
-	{learn: 0}
+	{learn: 0},
+	{Hat: 0}
 ];
 }
 
@@ -5930,15 +5989,14 @@ function or(l, r)
 }
 
 self.C3_ExpressionFuncs = [
-		() => "Learn",
-		() => "stolknoveniya",
-		() => 1,
 		() => "REKLAMA",
 		() => "VK",
 		() => "",
+		() => 208559018,
 		() => 2.5,
 		() => 950,
 		() => 500,
+		() => 1,
 		() => 21,
 		() => 0,
 		() => -700,
@@ -5948,8 +6006,95 @@ self.C3_ExpressionFuncs = [
 			return () => v0.GetValue();
 		},
 		() => 2,
-		() => "Languages",
+		() => "Learn",
+		() => "stolknoveniya",
+		() => "Saves",
+		() => "save1",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0();
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("levels");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("Money");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka10");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka11");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka12");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka2");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka3");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka4");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka5");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka6");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka7");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka8");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka9");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_animation");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("Lang");
+		},
 		() => 3,
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject();
+		},
+		() => "knife_proverka10",
+		() => "knife_proverka11",
+		() => "knife_proverka12",
+		() => "knife_proverka2",
+		() => "knife_proverka3",
+		() => "knife_proverka4",
+		() => "knife_proverka5",
+		() => "knife_proverka6",
+		() => "knife_proverka7",
+		() => "knife_proverka8",
+		() => "knife_proverka9",
+		() => "levels",
+		() => "Money",
+		() => "knife_animation",
+		() => "Lang",
+		() => "Languages",
 		() => 2000,
 		() => "наберите для победы",
 		() => "не хватает монет",
@@ -5961,8 +6106,8 @@ self.C3_ExpressionFuncs = [
 		() => "1",
 		() => 270,
 		() => 0.2,
-		() => 1900,
-		() => 110,
+		() => 455,
+		() => 85,
 		() => -3,
 		() => "2",
 		() => "3",
@@ -5987,10 +6132,6 @@ self.C3_ExpressionFuncs = [
 		() => 700,
 		() => -15,
 		() => -7,
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject();
-		},
 		() => 150,
 		() => "Gift",
 		p => {
@@ -6036,10 +6177,18 @@ self.C3_ExpressionFuncs = [
 		() => "CAT",
 		() => 5000,
 		() => 92,
+		() => 0.1,
 		() => "5",
 		() => 1.5,
 		() => "6",
 		() => 0.6,
+		() => "Hats",
+		() => "knife8",
+		() => "knife9",
+		() => "knife10",
+		() => "knife11",
+		() => "knife12",
+		() => "knife13",
 		() => "Perehod",
 		() => 1000,
 		p => {
@@ -6065,7 +6214,6 @@ self.C3_ExpressionFuncs = [
 		() => "9",
 		() => 9,
 		() => 23,
-		() => 1.3,
 		() => "10",
 		() => "11",
 		() => 11,
@@ -6082,7 +6230,7 @@ self.C3_ExpressionFuncs = [
 		() => 14,
 		() => 2200,
 		() => "15",
-		() => 1.2,
+		() => 1.6,
 		() => "16",
 		() => 16,
 		() => 33,
