@@ -5810,7 +5810,7 @@ self.C3_JsPropNameTable = [
 	{Galochka: 0},
 	{pole: 0},
 	{club_button: 0},
-	{hat: 0},
+	{HAT: 0},
 	{doska_hatsBIG: 0},
 	{krest_doskaBIG_Hats: 0},
 	{hat1: 0},
@@ -5830,6 +5830,17 @@ self.C3_JsPropNameTable = [
 	{shop_hats: 0},
 	{ramka_hats: 0},
 	{coin_hats: 0},
+	{hat5: 0},
+	{hat_buy5: 0},
+	{lock_hat5: 0},
+	{Sharf: 0},
+	{granat: 0},
+	{gra2: 0},
+	{gra1: 0},
+	{dropsGranat: 0},
+	{spawnerGranat: 0},
+	{Zefir: 0},
+	{spawnZefir: 0},
 	{ochki: 0},
 	{Семья1: 0},
 	{loadVKBridge: 0},
@@ -6069,6 +6080,50 @@ self.C3_ExpressionFuncs = [
 		},
 		p => {
 			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka10");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka11");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka12");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka2");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka3");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka4");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka5");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka6");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka7");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka8");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka9");
+		},
+		p => {
+			const n0 = p._GetNode(0);
 			return () => n0.ExpObject("knife_animation");
 		},
 		p => {
@@ -6091,9 +6146,21 @@ self.C3_ExpressionFuncs = [
 		() => "knife_proverka7",
 		() => "knife_proverka8",
 		() => "knife_proverka9",
+		() => "hat_proverka10",
+		() => "hat_proverka11",
+		() => "hat_proverka12",
+		() => "hat_proverka2",
+		() => "hat_proverka3",
+		() => "hat_proverka4",
+		() => "hat_proverka5",
+		() => "hat_proverka6",
+		() => "hat_proverka7",
+		() => "hat_proverka8",
+		() => "hat_proverka9",
 		() => "levels",
 		() => "Money",
 		() => "knife_animation",
+		() => "hat_animation",
 		() => "Lang",
 		() => "Languages",
 		() => 2000,
@@ -6120,6 +6187,8 @@ self.C3_ExpressionFuncs = [
 		() => "Apple",
 		() => 30,
 		() => -5,
+		() => "Granat",
+		() => 250,
 		() => "Orange",
 		() => 50,
 		() => "w.melon",
@@ -6129,6 +6198,7 @@ self.C3_ExpressionFuncs = [
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0(1, 0, 2, 3, 4);
 		},
+		() => "Zefir",
 		() => "jb",
 		() => 700,
 		() => -15,
@@ -6146,15 +6216,14 @@ self.C3_ExpressionFuncs = [
 		() => 4,
 		() => 6,
 		() => 7,
-		() => 250,
 		() => "giria",
 		() => 120,
 		() => 1500,
 		() => "Middle",
 		() => "variables",
 		() => "Scores",
-		() => 800,
 		() => 320,
+		() => 800,
 		() => 220,
 		() => 3000,
 		() => 1300,
@@ -6162,8 +6231,9 @@ self.C3_ExpressionFuncs = [
 		() => 340,
 		() => 210,
 		() => "MENU",
-		() => 2500,
-		() => 4000,
+		() => 1800,
+		() => 3500,
+		() => 2800,
 		() => -1000,
 		() => -1500,
 		() => "knife2",
@@ -6185,12 +6255,13 @@ self.C3_ExpressionFuncs = [
 		() => 0.6,
 		() => "Hats",
 		() => 1000,
+		() => 2500,
+		() => 3600,
+		() => 4500,
 		() => "hat2",
 		() => "hat3",
 		() => "hat4",
 		() => "hat5",
-		() => "hat6",
-		() => "hat7",
 		() => "Perehod",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
@@ -6215,26 +6286,27 @@ self.C3_ExpressionFuncs = [
 		() => "9",
 		() => 9,
 		() => 23,
+		() => 1400,
 		() => "10",
+		() => 1600,
 		() => "11",
 		() => 11,
 		() => 24,
-		() => 1800,
+		() => 1950,
 		() => "12",
 		() => 12,
-		() => 27,
 		() => "13",
 		() => 13,
-		() => 32,
 		() => 0.9,
 		() => "14",
 		() => 14,
 		() => 2200,
 		() => "15",
+		() => 32,
+		() => 2300,
 		() => 1.6,
 		() => "16",
 		() => 16,
-		() => 33,
 		() => 2350,
 		() => "17",
 		() => 17,
@@ -6245,12 +6317,11 @@ self.C3_ExpressionFuncs = [
 		() => 19,
 		() => 2650,
 		() => "20",
-		() => 38,
-		() => 2800,
+		() => 33,
 		() => "21",
-		() => 40,
 		() => "22",
 		() => 22,
+		() => 36,
 		() => 3200
 ];
 
