@@ -5579,11 +5579,24 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.Sprite.Acts.SetVisible,
 		C3.Behaviors.Physics.Acts.EnableCollisions,
+		C3.Plugins.LocalStorage.Cnds.OnItemGet,
+		C3.Plugins.Dictionary.Acts.JSONLoad,
+		C3.Plugins.LocalStorage.Exps.ItemValue,
+		C3.Plugins.Dictionary.Exps.Get,
+		C3.Plugins.System.Cnds.Every,
+		C3.Plugins.LocalStorage.Acts.SetItem,
+		C3.Plugins.Dictionary.Exps.AsJSON,
+		C3.Plugins.LocalStorage.Acts.CheckItemExists,
+		C3.Plugins.LocalStorage.Cnds.OnItemExists,
+		C3.Plugins.LocalStorage.Acts.GetItem,
+		C3.Plugins.Dictionary.Cnds.IsEmpty,
+		C3.Plugins.Dictionary.Acts.AddKey,
+		C3.Plugins.System.Cnds.EveryTick,
+		C3.Plugins.Dictionary.Acts.SetKey,
 		C3.Plugins.Sprite.Cnds.IsOutsideLayout,
 		C3.Plugins.Sprite.Acts.Spawn,
 		C3.Plugins.System.Acts.SubVar,
 		C3.Plugins.Sprite.Acts.Destroy,
-		C3.Plugins.System.Cnds.Every,
 		C3.Behaviors.Bullet.Cnds.CompareSpeed,
 		C3.Plugins.Sprite.Cnds.IsAnimPlaying,
 		C3.Behaviors.Bullet.Acts.SetAngleOfMotion,
@@ -5607,7 +5620,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Exps.Y,
 		C3.Behaviors.Bullet.Acts.SetGravity,
 		C3.Behaviors.Bullet.Acts.SetBounceOffSolids,
-		C3.Plugins.System.Cnds.EveryTick,
 		C3.Behaviors.Physics.Acts.ApplyForceAtAngle,
 		C3.Plugins.System.Cnds.Compare,
 		C3.Plugins.Text.Acts.SetVisible,
@@ -6038,8 +6050,149 @@ self.C3_ExpressionFuncs = [
 		},
 		() => "Learn",
 		() => "stolknoveniya",
-		() => "Languages",
+		() => "Saves",
+		() => "save1",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0();
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("levels");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("Money");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka10");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka11");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka12");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka2");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka3");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka4");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka5");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka6");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka7");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka8");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_proverka9");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka10");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka11");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka12");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka2");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka3");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka4");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka5");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka6");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka7");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka8");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("hat_proverka9");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("knife_animation");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject("Lang");
+		},
 		() => 3,
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject();
+		},
+		() => "knife_proverka10",
+		() => "knife_proverka11",
+		() => "knife_proverka12",
+		() => "knife_proverka2",
+		() => "knife_proverka3",
+		() => "knife_proverka4",
+		() => "knife_proverka5",
+		() => "knife_proverka6",
+		() => "knife_proverka7",
+		() => "knife_proverka8",
+		() => "knife_proverka9",
+		() => "hat_proverka10",
+		() => "hat_proverka11",
+		() => "hat_proverka12",
+		() => "hat_proverka2",
+		() => "hat_proverka3",
+		() => "hat_proverka4",
+		() => "hat_proverka5",
+		() => "hat_proverka6",
+		() => "hat_proverka7",
+		() => "hat_proverka8",
+		() => "hat_proverka9",
+		() => "levels",
+		() => "Money",
+		() => "knife_animation",
+		() => "hat_animation",
+		() => "Lang",
+		() => "Languages",
 		() => 2000,
 		() => "наберите для победы",
 		() => "не хватает монет",
@@ -6086,10 +6239,6 @@ self.C3_ExpressionFuncs = [
 		() => 700,
 		() => -15,
 		() => -7,
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpObject();
-		},
 		() => 150,
 		() => "Gift",
 		p => {
